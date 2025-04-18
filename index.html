@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Graxus - The Living Collective v2.3</title>
+
+  <!-- Bootstrap 5 -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+      background: #111;
+      color: #99cc33;
+      font-family: 'Press Start 2P', monospace;
+      overflow-x: hidden;
+    }
+    .wrapper {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+    }
+    .content {
+      flex: 1 0 auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      padding: 20px 10px;
+    }
+    .footer {
+      flex-shrink: 0;
+      background: #111;
+      border-top: 2px solid #333;
+      padding: 10px 0;
+    }
+    h1 {
+      font-size: 2.5rem;
+    }
+    #swarmCounter {
+      font-size: 1.25rem;
+      font-weight: bold;
+    }
+    .sparkle {
+      position: absolute;
+      font-size: 1rem;
+      animation: sparkleMove 2s linear infinite;
+      opacity: 0.8;
+      pointer-events: none;
+    }
+    @keyframes sparkleMove {
+      0% { transform: translate(0, 0) scale(1); opacity: 1; }
+      100% { transform: translate(20px, -40px) scale(0.5); opacity: 0; }
+    }
+    .btn-custom {
+      background-color: #99cc33;
+      color: #111;
+      font-family: 'Press Start 2P', monospace;
+      border: none;
+      font-size: 1rem;
+    }
+    .btn-custom:hover {
+      background-color: #ccff66;
+      color: #111;
+    }
+    .progress {
+      background-color: #222;
+      height: 20px;
+      border-radius: 6px;
+      overflow: hidden;
+      margin-bottom: 8px;
+    }
+    .globalStats {
+      font-size: 1rem;
+      margin-top: 10px;
+    }
+    @media (min-width: 768px) {
+      h1 { font-size: 4rem; }
+      #swarmCounter { font-size: 2rem; }
+      .btn-custom { font-size: 1.5rem; padding: 12px 24px; }
+      .progress { height: 24px; }
+      .globalStats { font-size: 1.5rem; }
+      .footer { padding: 20px 0; }
+    }
+    .card-title {
+      font-family: 'Press Start 2P', monospace;
+      color: #ccff66;
+      font-size: 1.25rem;
+      text-shadow: 0 0 3px #99cc33, 0 0 6px #99cc33;
+      margin-bottom: 10px;
+    }
+    .card-subtitle {
+      font-family: 'Press Start 2P', monospace;
+      color: #ccff66;
+      text-shadow: 0 0 3px #99cc33, 0 0 6px #99cc33;
+      margin-left: 7px;
+    }
+    @media (min-width: 768px) {
+      .card-title {
+        font-size: 1.75rem;
+      }
+    }
+    .neon-card {
+      border: 2px solid #99cc33;
+      background: rgba(17, 17, 17, 0.95);
+      box-shadow: 0 0 10px #99cc33, 0 0 20px #99cc33;
+      transition: all 0.3s ease-in-out;
+    }
+    .neon-card:hover {
+      box-shadow: 0 0 15px #ccff66, 0 0 30px #ccff66;
+      transform: scale(1.02);
+    }
+    .neon-dead {
+      border: 2px solid #ff6666;
+      background: rgba(17, 17, 17, 0.95);
+      box-shadow: 0 0 10px #ff6666, 0 0 20px #ff6666;
+      transition: all 0.3s ease-in-out;
+    }
+    .neon-dead:hover {
+      box-shadow: 0 0 15px #ff9999, 0 0 30px #ff9999;
+      transform: scale(1.02);
+    }
+  </style>
+</head>
+<body class="wrapper">
+
+<!-- 🥚 Loading Screen -->
+<div id="loadingOverlay" style="
+  position:fixed;top:0;left:0;width:100%;height:100%;
+  background:#111;z-index:9999;
+  display:flex;align-items:center;justify-content:center;
+  flex-direction: column;
+  font-family:'Press Start 2P', monospace;
+  color:#99cc33;
+  font-size:24px;
+  transition: opacity 0.5s ease;
+  text-align:center;
+">
+  <div style="font-size:32px; margin-bottom:16px;">🥚 Graxus 🐙</div>
+  <div style="font-size:18px; margin-bottom:16px;">The Living Collective</div>
+  <div style="font-size:16px; margin-bottom:24px;">Created by Goji</div>
+
+  <div id="loadingBarContainer" style="width:80%; background:#333; border-radius:10px; overflow:hidden; height:24px;">
+    <div id="loadingBar" style="width:0%; height:100%; background:#99cc33; transition: width 0.2s;"></div>
+  </div>
+
+  <div id="loadingText" style="font-size:14px; margin-top:10px;">Loading...</div>
+</div>
+
+<!-- 🧬 Main Content -->
+<div class="content container-fluid">
+  <h1 class="mb-2">🥚 Graxus 🐙</h1>
+  <div id="swarmCounter" class="mb-4"></div>
+  <div id="stageDisplay" class="row justify-content-center w-100"></div>
+  <div id="globalStats" class="globalStats"></div>
+  <div style="width: 80%; max-width: 600px;">
+  <div class="progress my-2" style="height: 20px; background: #222;">
+    <div id="tickProgressBar" class="progress-bar position-relative" style="width: 0%; opacity:0.9; background-color: #99cc33;">
+      <div class="w-100 h-100 d-flex align-items-center justify-content-center position-absolute" style="color: #ccc; font-size:12px; font-family: 'Press Start 2P', monospace; pointer-events: none;">
+        Ticking...
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- 🛠 Control Buttons -->
+<footer class="footer">
+  <div class="container d-flex flex-wrap justify-content-center gap-2">
+    <button id="startBtn" class="btn btn-custom">Start</button>
+    <button id="feedBtn" class="btn btn-custom">Feed</button>
+    <button id="playBtn" class="btn btn-custom">Play</button>
+    <button id="resetBtn" class="btn btn-custom">Reset</button>
+  </div>
+</footer>
+<script>
+let graxus = JSON.parse(localStorage.getItem('graxusSave')) || [];
+let started = graxus.length > 0;
+let graxCounter = parseInt(localStorage.getItem('graxCounter')) || 1;
+let firstSplitDone = false;
+
+// 🧬 Trait Types
+const traits = [
+  { name: "Lazy", growthRate: 0.3, hungerRate: 1, boredomRate: 1 },
+  { name: "Energetic", growthRate: 0.7, hungerRate: 1, boredomRate: 2 },
+  { name: "Greedy", growthRate: 0.5, hungerRate: 2, boredomRate: 1 },
+  { name: "Chill", growthRate: 0.5, hungerRate: 0.5, boredomRate: 0.5 },
+  { name: "Hyper", growthRate: 0.8, hungerRate: 1.5, boredomRate: 2 },
+  { name: "Balanced", growthRate: 0.5, hungerRate: 1, boredomRate: 1 }
+];
+
+// 🎵 Sound Pop
+function playPop(frequency = 440) {
+  const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  const oscillator = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+  oscillator.type = 'square';
+  oscillator.frequency.setValueAtTime(frequency, audioCtx.currentTime);
+  gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+  oscillator.connect(gain);
+  gain.connect(audioCtx.destination);
+  oscillator.start();
+  oscillator.stop(audioCtx.currentTime + 0.1);
+}
+
+// 🥚 Hatch Initial Egg
+function startGraxus() {
+  if (started) return alert('Starter egg already hatched!');
+  started = true;
+  hatchEgg();
+  document.getElementById('startBtn').disabled = true;
+  attachButtonListeners(); // 🛠 Ensure buttons are always live
+}
+
+function hatchEgg(applyAdultPenalty = false) {
+  const id = "grax_" + Date.now();
+  const name = "Grax-" + String(graxCounter).padStart(3, "0");
+  graxCounter++;
+  graxus.push({
+    id, name, hunger: 0, boredom: 0, growth: 0,
+    stage: "egg", 
+    alive: true, 
+    createdAt: Date.now(),
+    trait: randomTrait(), 
+    readyToMultiply: false,
+    babiesMade: 0,
+    pendingStageUp: false
+  });
+
+  if (applyAdultPenalty) {
+    const adults = graxus.filter(g => g.alive && g.stage === "adult");
+    for (const a of adults) {
+      a.growth = Math.floor(a.growth * 0.5);
+    }
+    updateAdultStageGrowth(); // sync after hatch
+  }
+
+  renderGraxus();
+  
+  setTimeout(() => playPop(380), 100);
+}
+
+function randomTrait() {
+  return traits[Math.floor(Math.random() * traits.length)];
+}
+
+function updateAdultStageGrowth() {
+  const adults = graxus.filter(g => g.alive && g.stage === "adult");
+  if (adults.length > 0) {
+    const totalGrowth = adults.reduce((sum, g) => sum + g.growth, 0);
+    const averageGrowth = totalGrowth / adults.length;
+    for (const g of adults) {
+      g.growth = averageGrowth;
+    }
+  }
+}
+
+// 🥕 Feeding and Playing
+function feedAll() {
+  for (const g of graxus) {
+    if (g.alive) {
+      g.hunger = Math.max(0, g.hunger - 20);
+      g.growth = Math.min(100, g.growth + getFeedGrowthBoost(g.stage));
+      if (g.growth >= 100) g.pendingStageUp = true; // 🛠️ Mark for stage-up
+    }
+  }
+  renderGraxus(); // JUST render, no evolving
+}
+
+function playAll() {
+  for (const g of graxus) {
+    if (g.alive) {
+      g.boredom = Math.max(0, g.boredom - 20);
+      g.growth = Math.min(100, g.growth + getPlayGrowthBoost(g.stage));
+      if (g.growth >= 100) g.pendingStageUp = true; // 🛠️ Mark for stage-up
+    }
+  }
+  renderGraxus(); // JUST render, no evolving
+}
+
+// 🌿 Growth Boosts
+function getFeedGrowthBoost(stage) {
+  if (stage === "egg") return 2;
+  if (stage === "baby") return 6;
+  if (stage === "adult") return 10;
+  return 5;
+}
+
+function getPlayGrowthBoost(stage) {
+  if (stage === "egg") return 1;
+  if (stage === "baby") return 4;
+  if (stage === "adult") return 7;
+  return 3;
+}
+
+// ⏳ Ticking Updates
+function tick() {
+  resetTickBar();
+  startTickBar();
+
+  for (const g of graxus) {
+    if (!g.alive) continue;
+    const t = g.trait;
+    g.hunger = Math.min(100, g.hunger + (t.hungerRate || 1));
+    g.boredom = Math.min(100, g.boredom + (t.boredomRate || 1));
+    g.growth = Math.min(100, g.growth + (t.growthRate || 0.5));
+
+    if (g.hunger >= 100 || g.boredom >= 100) {
+      g.alive = false;
+    }
+  }
+
+  // 🧬 Group stage evolution
+  const stages = ["egg", "baby", "adult"];
+  for (const stage of stages) {
+    const stageGroup = graxus.filter(g => g.alive && g.stage === stage);
+    if (stageGroup.length > 0 && stageGroup.every(g => g.growth >= 100)) {
+      for (const g of stageGroup) {
+        if (stage === "egg") {
+          g.stage = "baby";
+          g.hunger = 0;
+          g.boredom = 0;
+          g.growth = 0;
+        } else if (stage === "baby") {
+          g.stage = "adult";
+          g.hunger = 0;
+          g.boredom = 0;
+          g.growth = 0;
+          updateAdultStageGrowth(); // 🛠️ Sync growth when a new adult appears
+        } else if (stage === "adult") {
+          g.readyToMultiply = true;
+        }
+      }
+    }
+  }
+
+  // 🌟 Solo first split (ONLY after group evolutions)
+  if (!firstSplitDone) {
+    const readyAdults = graxus.filter(g => g.alive && g.stage === "adult" && g.readyToMultiply);
+    if (readyAdults.length === 1) {
+      hatchEgg();
+      readyAdults[0].growth = 0;
+      readyAdults[0].readyToMultiply = false;
+      firstSplitDone = true;
+    }
+  }
+
+  // 🐙 Normal multiplication
+  const readyAdults = graxus.filter(g => g.alive && g.stage === "adult" && g.readyToMultiply);
+  for (let i = 0; i < readyAdults.length; i++) {
+    for (let j = i + 1; j < readyAdults.length; j++) {
+      const a = readyAdults[i];
+      const b = readyAdults[j];
+      if (a.babiesMade >= 2 || b.babiesMade >= 2) continue;
+
+      hatchEgg(true); // 🛠️ apply adult growth penalty when hatching a baby
+      a.babiesMade++;
+      b.babiesMade++;
+      a.readyToMultiply = false;
+      b.readyToMultiply = false;
+      return; // Only one hatch per tick
+    }
+  }
+
+  localStorage.setItem('graxusSave', JSON.stringify(graxus));
+  localStorage.setItem('graxCounter', graxCounter);
+  renderGraxus();
+}
+
+// 🌟 Main Render Function
+function renderGraxus() {
+  const loadingOverlay = document.getElementById('loadingOverlay');
+  if (loadingOverlay) {
+    setTimeout(() => {
+      loadingOverlay.style.opacity = 0;
+      setTimeout(() => loadingOverlay.remove(), 500);
+    }, 300);
+  }
+
+  const stageDiv = document.getElementById('stageDisplay');
+  if (!stageDiv) return;
+  stageDiv.innerHTML = '';
+
+  let eggs = [], babies = [], adults = [], dead = 0;
+  for (const g of graxus) {
+    if (!g.alive) { dead++; continue; }
+    if (g.stage === "egg") eggs.push(g);
+    if (g.stage === "baby") babies.push(g);
+    if (g.stage === "adult") adults.push(g);
+  }
+
+  const row = document.createElement('div');
+  row.className = 'row justify-content-center g-3 w-100';
+
+  if (eggs.length) row.appendChild(makeStageCard("🥚", "Eggs", eggs));
+  if (babies.length) row.appendChild(makeStageCard("🍄", "Babies", babies));
+  if (adults.length) row.appendChild(makeStageCard("🐙", "Adults", adults));
+  if (dead > 0) row.appendChild(makeDeadCard(dead));
+
+  stageDiv.appendChild(row);
+
+  document.getElementById('globalStats').innerText = `🐙 Alive: ${eggs.length + babies.length + adults.length} | ✨ Ascended: ${dead}`;
+  document.getElementById('swarmCounter').innerText = `🧬 Swarm: ${eggs.length + babies.length + adults.length} Grax`;
+
+  // 🛠 Fix for mobile buttons freezing
+  attachButtonListeners();
+}
+
+// 🎴 Stage Cards
+function makeStageCard(icon, label, group) {
+  const col = document.createElement('div');
+  col.className = 'col-12 col-sm-6 col-md-4 col-lg-3 d-flex align-items-stretch';
+
+  const aliveGroup = group.filter(g => g.alive); // ✅ Only alive Grax
+  const count = aliveGroup.length || 1; // ✅ Prevent divide by 0
+
+  const avgHunger = aliveGroup.reduce((sum, g) => sum + g.hunger, 0) / count;
+  const avgBoredom = aliveGroup.reduce((sum, g) => sum + g.boredom, 0) / count;
+  const avgGrowth = aliveGroup.reduce((sum, g) => sum + g.growth, 0) / count;
+
+  col.innerHTML = `
+    <div class="card neon-card bg-dark border-success w-100">
+      <div class="card-body d-flex flex-column justify-content-between">
+        <div>
+          <h5 class="card-title">${icon} ${label}</h5>
+          <h6 class="card-subtitle mb-2">${icon} x${aliveGroup.length}</h6>
+        </div>
+        <div class="my-2">
+          ${makeProgressBar("🍖", "Hunger", avgHunger, "success")}
+          ${makeProgressBar("🎾", "Boredom", avgBoredom, "warning")}
+          ${makeProgressBar("🌱", "Growth", avgGrowth, "info")}
+        </div>
+      </div>
+    </div>
+  `;
+
+  addSparkles(col.querySelector('.card-body'), aliveGroup.length);
+  return col;
+}
+
+// 💀 Dead Card
+function makeDeadCard(deadCount) {
+  const col = document.createElement('div');
+  col.className = 'col-12 col-sm-6 col-md-4 col-lg-3 d-flex align-items-stretch';
+
+  col.innerHTML = `
+    <div class="card neon-dead bg-dark border-danger w-100">
+      <div class="card-body d-flex flex-column justify-content-center text-center">
+        <h5 class="card-title">☠️ Ascended</h5>
+        <h6 class="card-subtitle">${deadCount} Grax</h6>
+      </div>
+    </div>
+  `;
+  return col;
+}
+// 📊 Progress Bar Generator
+function makeProgressBar(emoji, label, percent, color) {
+  return `
+    <div class="d-flex align-items-center mb-2" style="height: 20px;">
+      <div style="width:24px;text-align:center;">${emoji}</div>
+      <div class="progress flex-grow-1 position-relative" style="height: 20px; background: #222;">
+        <div class="w-100 h-100 d-flex align-items-center justify-content-center position-absolute" style="color: #ccc; font-size:12px; pointer-events: none;">${label}</div>
+        <div class="progress-bar bg-${color}" style="width:${percent}%; opacity:0.9;"></div>
+      </div>
+    </div>
+  `;
+}
+
+// ✨ Sparkles inside Card
+function addSparkles(element, amount) {
+  for (let i = 0; i < Math.min(3, amount); i++) {
+    const sparkle = document.createElement('div');
+    sparkle.className = 'sparkle';
+    sparkle.style.left = Math.random() * 60 + "px";
+    sparkle.style.top = Math.random() * 20 + "px";
+    sparkle.style.color = '#ccffcc';
+    sparkle.innerText = '✨';
+    element.appendChild(sparkle);
+  }
+}
+
+// 🧹 Clear Save Data
+function clearSave() {
+  ["graxusSave", "graxCounter"].forEach(key => localStorage.removeItem(key));
+  location.reload();
+}
+
+// ⏳ Loading Bar Simulation
+let loadingProgress = 0;
+function simulateLoading() {
+  const loadingBar = document.getElementById('loadingBar');
+  const loadingOverlay = document.getElementById('loadingOverlay');
+  if (!loadingBar || !loadingOverlay) return;
+
+  const interval = setInterval(() => {
+    loadingProgress += Math.random() * 10;
+    if (loadingProgress >= 100) {
+      loadingProgress = 100;
+      clearInterval(interval);
+
+      setTimeout(() => {
+        playPop(600);
+        loadingOverlay.style.opacity = 0;
+        setTimeout(() => {
+          loadingOverlay.remove();
+
+          if (started) {
+            renderGraxus(); // Re-render on load finish
+          }
+          attachButtonListeners(); // 🛠
+          startTickBar(); // 🛠 Start ticking after load
+          tick(); // ✨ Auto-run a first tick after loading
+        }, 500);
+      }, 300);
+    }
+    loadingBar.style.width = loadingProgress + '%';
+  }, 200);
+}
+simulateLoading();
+
+function attachButtonListeners() {
+  const startBtn = document.getElementById('startBtn');
+  const feedBtn = document.getElementById('feedBtn');
+  const playBtn = document.getElementById('playBtn');
+  const resetBtn = document.getElementById('resetBtn');
+
+  if (startBtn && !startBtn.hasListener) {
+    startBtn.addEventListener('click', startGraxus);
+    startBtn.hasListener = true;
+  }
+  if (feedBtn && !feedBtn.hasListener) {
+    feedBtn.addEventListener('click', feedAll);
+    feedBtn.hasListener = true;
+  }
+  if (playBtn && !playBtn.hasListener) {
+    playBtn.addEventListener('click', playAll);
+    playBtn.hasListener = true;
+  }
+  if (resetBtn && !resetBtn.hasListener) {
+    resetBtn.addEventListener('click', clearSave);
+    resetBtn.hasListener = true;
+  }
+}
+
+// 🕒 Tick Bar Visual
+let tickProgress = 0;
+let tickInterval;
+
+function startTickBar() {
+  if (tickInterval) clearInterval(tickInterval);
+
+  tickProgress = 0;
+  const bar = document.getElementById('tickProgressBar');
+  if (bar) bar.style.width = '0%';
+
+  tickInterval = setInterval(() => {
+    tickProgress += 2;
+    if (tickProgress >= 100) {
+      tickProgress = 100;
+      clearInterval(tickInterval);
+    }
+    if (bar) bar.style.width = `${tickProgress}%`;
+  }, 100);
+}
+
+function resetTickBar() {
+  tickProgress = 0;
+  const bar = document.getElementById('tickProgressBar');
+  if (bar) {
+    bar.style.width = '0%';
+  }
+}
+
+
+
+// 🛠 Setup Tick Intervals
+setInterval(tick, 5000); // Update every 5 seconds
+setInterval(() => {
+  for (const g of graxus) {
+    if (g.alive) {
+      g.hunger = Math.max(0, g.hunger - 5);
+      g.boredom = Math.max(0, g.boredom - 5);
+      g.growth = Math.min(100, g.growth + 3);
+    }
+  }
+  renderGraxus();
+  startTickBar(); // ✨ Optional: Refresh the tick bar after healing
+}, 30000); // Recovery and growth boost every 30 seconds
+</script>
+
+<!-- Bootstrap Bundle -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>
