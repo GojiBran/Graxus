@@ -1,11 +1,8 @@
-# Graxus
- Graxus - Idle Clicker?
-
-# 🥚 Graxus: The Living Collective - GDD
+# 🥚 Graxus: The Living Collective (idle clicker?)
 
 ## 🎮 Overview
-**Graxus** is an idle swarm evolution game where players hatch, grow, and multiply creatures called **Grax** into a massive swarm.  
-Care for them collectively by feeding and entertaining, and watch as they evolve through stages and eventually multiply.
+Graxus is an idle swarm evolution game where players hatch, grow, and multiply creatures called Grax into a massive collective.  
+Feed and entertain them to keep them alive and watch as the swarm evolves and multiplies.
 
 ---
 
@@ -13,12 +10,12 @@ Care for them collectively by feeding and entertaining, and watch as they evolve
 
 | System | Description |
 |:-------|:------------|
-| **Start** | Hatch the first Grax manually by pressing `Start`. |
-| **Growth** | Each Grax grows automatically over time and when fed/played with. |
-| **Hunger / Boredom** | Grax become hungry and bored over time; neglect causes death. |
-| **Stages** | Grax evolve through `Egg → Baby → Adult` based on group growth. |
-| **Multiplication** | Adults ready to multiply can hatch new eggs when paired. |
-| **Death** | If a Grax reaches 100% hunger or boredom, it dies and is counted as "Ascended." |
+| Start | Hatch the first Grax manually by pressing Start. |
+| Growth | Grax grow automatically over time and faster when fed or played with. |
+| Hunger / Boredom | Grax get hungry and bored over time. If either reaches 100%, they die. |
+| Stages | Grax evolve through Egg → Baby → Adult. The entire stage must reach 100% growth to evolve. |
+| Multiplication | Adults ready to multiply can pair up to hatch a new Grax. |
+| Death | Dead Grax are counted as "Ascended" and no longer participate in the swarm. |
 
 ---
 
@@ -26,13 +23,13 @@ Care for them collectively by feeding and entertaining, and watch as they evolve
 
 | System | Details |
 |:-------|:--------|
-| **Traits** | Each Grax has one random trait affecting growth, hunger, and boredom rates. |
-| **Group Evolution** | Entire stage group must reach 100% growth before evolving. |
-| **Adult Growth Sync** | All adults have averaged growth to represent the entire adult stage. |
-| **Reproduction Penalty** | After hatching a baby, adult growth is halved to simulate effort. |
-| **First Split** | The first adult hatches one free egg automatically without a partner. |
-| **Loading Bar** | Smooth animated loading with sound feedback. |
-| **Sparkles & Effects** | Visual sparkles on Grax cards and neon-style UI. |
+| Traits | Each Grax has one random trait that affects their growth, hunger, and boredom rates. |
+| Group Evolution | All Grax in a stage must reach 100% growth before evolving. No individuals evolve alone. |
+| Adult Growth Sync | Adult Grax share an average growth value to represent their collective readiness. |
+| Reproduction Penalty | When new Grax hatch, existing adults lose 50% growth and re-average. |
+| First Split | The first adult automatically hatches one egg when ready, without needing a partner. |
+| Loading Bar | Visual loading screen with animation and sound effect. |
+| Sparkles | Sparkling visual effects on swarm cards for atmosphere. |
 
 ---
 
@@ -40,98 +37,73 @@ Care for them collectively by feeding and entertaining, and watch as they evolve
 
 | Element | Style |
 |:--------|:------|
-| **Theme** | Dark neon retro aesthetic (`#111` background, `#99cc33` neon green). |
-| **Font** | `'Press Start 2P'` retro pixel font. |
-| **Cards** | Neon glowing cards per stage with progress bars for Hunger, Boredom, Growth. |
-| **Progress Bars** | Dark backgrounds with neon-colored progress fill and centered labels. |
-| **Sparkles** | Small animated sparkles drift on cards for a living effect. |
+| Theme | Dark neon aesthetic (#111 background, #99cc33 neon accents). |
+| Font | 'Press Start 2P' retro pixel font. |
+| Cards | Neon-bordered cards for each stage group with visual meters. |
+| Progress Bars | Centered text labels with neon color fills. |
+| Sparkles | Animated floating sparkles to make the swarm feel alive. |
 
 ---
 
 ## 🔊 Sound
 
-- **Pop Sounds**: Square wave pops when events like hatch or load complete.
-- **Loading Complete Sound**: Higher-pitch pop to signal game ready.
-  
+- Pop sounds when hatching or loading finishes.
+- Higher-pitched pop to indicate successful actions.
+
 ---
 
 ## ⚙️ Technical Details
 
 | Feature | Status |
 |:--------|:-------|
-| **Auto-saving** | LocalStorage saves swarm state. |
-| **Tick System** | Every 5 seconds, all Grax stats are updated (hunger, boredom, growth). |
-| **Recovery Boost** | Every 30 seconds, small passive healing and growth boost. |
-| **Manual Feed/Play** | Player can Feed and Play via buttons anytime. |
-| **Mobile Support** | Fully responsive with Bootstrap 5 layout. |
-| **Performance** | Lightweight, no frameworks beyond Bootstrap. Fast on desktop and mobile. |
+| Auto-saving | Saves swarm data to browser localStorage automatically. |
+| Tick System | Updates Grax stats every 5 seconds. |
+| Recovery Boost | Small recovery in hunger and boredom every 30 seconds. |
+| Manual Feed/Play | Players can boost growth anytime with buttons. |
+| Mobile Support | Fully responsive design. |
+| Performance | Lightweight, minimal external libraries (only Bootstrap 5). |
 
 ---
 
-## 🚀 Future Expansion Ideas (Optional)
+## 🚀 Expansion Ideas
 
-| Idea | Quick Note |
-|:-----|:-----------|
-| **Grax Moods** | Grax show emotions when hungry, bored, happy, etc. |
-| **Rare Traits** | Shiny or rare Grax with unique visual effects. |
-| **Achievements** | Milestones for growing large swarms. |
-| **Monolith System** | Auto-feeds and entertains Grax slowly over time. |
-| **Grax Naming** | Allow players to rename individual Grax. |
-| **Gene Mixing** | Future feature where offspring traits combine from parents. |
-
----
-
-# 📅 Version 2.3 Status
-
-- ✅ Full hatch → evolve → multiply flow complete.
-- ✅ Adult growth synchronized.
-- ✅ Reproduction penalty working.
-- ✅ Smooth loading, clean UI.
-- ✅ Polished to "playable alpha" level.
-- 🔥 Ready for expansion modules!
+| Idea | Note |
+|:-----|:-----|
+| Grax Moods | Visual indicators for different emotional states. |
+| Rare Traits | Rare shiny Grax variants with special visuals. |
+| Achievements | Unlock rewards for growing larger swarms. |
+| Monolith System | Slow automatic feeding and entertainment over time. |
+| Grax Naming | Rename individual Grax. |
+| Gene Mixing | Combine parent traits during reproduction. |
 
 ---
 
-# 🖊️ Credits
+## 📂 Save Data Structure
 
-- **Design & Development:** Goji (You 🐙)
-- **ChatGPT Assistance:** Markdown formatting, code polish, game design help ✨
-
----
-
-# 📂 Save Location
-
-- **Browser Storage:** `localStorage` keys:
-  - `graxusSave` — current swarm data
-  - `graxCounter` — counter for unique Grax IDs
+| Key | Data |
+|:----|:-----|
+| graxusSave | JSON of all live and dead Grax. |
+| graxCounter | Running number to assign unique Grax IDs. |
 
 ---
 
-# 📸 Example Screenshots (Future)
+## 📋 Testing Checklist
 
-- [ ] Swarm overview with stages
-- [ ] Closeup of sparkles and loading screen
-- [ ] Progress bar dynamics over time
-
----
-
-# 🧪 Testing Checklist
-
-- [x] Starter Egg hatches properly
-- [x] Hunger/Boredom/Growth update over time
-- [x] Feeding and Playing work properly
-- [x] Group evolves only when entire stage is 100%
-- [x] Adults average growth correctly
-- [x] First adult splits correctly
-- [x] Normal adult multiplication applies penalty
-- [x] Game saves/reloads automatically
+- [x] Starter egg hatches correctly
+- [x] Hunger, boredom, and growth update over time
+- [x] Feeding and playing modify stats correctly
+- [x] Entire stage evolves together
+- [x] Adult growth is properly averaged
+- [x] First split without partner works
+- [x] Adults reproduce correctly
+- [x] Saving and loading works automatically
 - [x] Mobile layout functional
-- [x] Loading bar + sound plays properly
+- [x] Loading bar and pop sound work on startup
 
 ---
 
-# 💬 Final Notes
+## 🧠 Final Notes
 
-**Graxus v2.3** is stable, adorable, and ready for future upgrades.  
-Already more polished than many indie "idle" games in the wild today.  
-🌱 **Grow the collective. Multiply. Evolve.** 🐙
+Graxus v2.3 is stable, polished, and fully playable as an idle swarm evolution game.  
+The base system is modular and expandable for future features.  
+Graxus will continue to grow as new ideas are added.
